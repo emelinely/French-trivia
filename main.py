@@ -1,5 +1,6 @@
 import random
 import time
+from operator import itemgetter
 
 # list of questions in french and english, their possible answers, and their correct answers, all divided into categories
 questions = [[["Question 1: Quelle est la traduction de \"turnip\"?", "1. navet", "2. radis", "3. tournoi", "Translation: What is the translation of turnip?", "1"], 
@@ -54,7 +55,7 @@ def translated(questions, group, a):
   print(questions[group][a][3])
 
 # prints title and description, then waits 
-print("French Quiz")
+print("French Quiz\n")
 print("This is a french quiz with 10 increasingly hard questions. All the questions and answers will be in french, \n\
 but a translation of the questions is available if needed. There are 3 general sections: translation, conjugation, and comprehension/ basic math. \n")
 time.sleep(2)
@@ -73,7 +74,7 @@ for i in range(len(questions)):
     ans = input("Please enter the number of your answer: ")
     if ans == questions[group][a][5]:   
       print('correct \n')
-      points += 1
+      points += 0.5
     else:
       print("false \n")
   else:
@@ -81,6 +82,31 @@ for i in range(len(questions)):
   group +=1
 
 # prints score in over ten and percentage formats
-print("your score was: {}/10".format(points))
+print("Your score was: {}/10".format(points))
 percentage = points*10
-print("in percentage form that is: {}%".format(percentage))
+print("In percentage form that is: {}%".format(percentage))
+
+
+name = input("What is your name? ")
+score = []
+highscore = []
+with open('scores.txt', 'a') as scores:
+  scores.write('{} {}\n'.format(percentage, name))
+with open('scores.txt', 'r') as s:
+  for line in s:
+    dict_score = {}
+    b = line.rstrip().split(' ')[0]
+    n = line.rstrip().split(' ')[1]
+    dict_score['name'] = n
+    dict_score['score'] = int(b)
+    score.append(dict_score)
+  score = sorted(score, key=itemgetter('score'), reverse=True)
+for i in range(3):
+  highscore.append(score[i])
+  print("{}. {} - {}".format(i + 1, score[i]['score'], score[i]['name']))
+
+current = {'name':name, 'score':percentage}
+if current in highscore:
+  print("You got a new highscore!")
+else:
+  print("Your score was {}, you did not get a new highscore".format(percentage))
